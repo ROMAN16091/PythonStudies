@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+header {
+    background: #70a1d3;
+    color: #ecf0f5;
+    padding: 1rem;
+}
+
+header nav a{
+    color: #ecf01f;
+    text-decoration: none;
+    margin-right: 1rem;
+
+}
+
+header nav a:hover{
+    text-decoration:underline;
+}
+
+main{
+    max-width: 800px;
+    margin: 2rem auto;
+    background: #ffffff;
+}
+
+.btn-logout{
+    background:none;
+    border: none;
+    color: #ecf01f;
+    cursor:pointer;
+}
+h1,h2{
+    margin-top:0;
+}
+form{
+    margin-bottom:1rem
+}
+form input[type='text'],
+form input[type ='email'],
+form input[type = 'password'],
+form select,
+form textarea{
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+button {
+    background: #2ecc71;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background: #27ae60;
+}
+
+.pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+
+}
+.pagination a{
+    margin: 0 0.5rem;
+    color: #34495e;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    text-decoration: underline
+}

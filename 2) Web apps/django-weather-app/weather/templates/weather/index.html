@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Погода в місті</title>
+</head>
+<body>
+    <style>
+        body{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #eaedff;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        input{
+            border: none;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: large;
+            font-weight: bold;
+            width: 130px;
+            margin: 10px 0px;
+        }
+        label{
+            font-size: 26px;
+            font-weight: bold;
+        }
+        button{
+            background: #663dff;
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            width: 150px;
+            border: none;
+        }
+        button:hover{
+           background: #7c5bf8;
+        }
+    </style>
+    <h1>Погода в місті</h1>
+    <form method="get">
+        {{ form.city.label_tag }}
+        {{ form.city }}
+        <button type="submit">Показати</button>
+    </form>
+    {% if weather %}
+    <h2>Погода в {{ weather.name }}</h2>
+    <p>Температура: {{ weather.main.temp }} С</p>
+    <p>Вологість: {{ weather.main.humidity }} %</p>
+    <p>Вітер: {{ weather.wind.speed }} м/с</p>
+    <p>Опис: {{ weather.weather.0.description }}</p>
+    {% endif %}
+</body>
+</html>

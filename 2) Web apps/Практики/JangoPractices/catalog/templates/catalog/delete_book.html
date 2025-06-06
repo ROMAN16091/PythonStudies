@@ -1,0 +1,10 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Видалити книгу{% endblock %}
+{% block content %}
+<h2>Видалити книгу "{{ book.title }}"?</h2>
+<form method="post">
+    {% csrf_token %}
+    <button>Delete</button>
+</form>
+<a href="/">Main</a>
+{% endblock %}

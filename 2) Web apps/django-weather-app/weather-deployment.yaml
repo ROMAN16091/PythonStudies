@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-deployment
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: weather
+  template:
+    metadata:
+      labels:
+        app: weather
+    spec:
+      containers:
+        - name: weather
+          image: django-weather-app-web:latest
+          ports:
+          - containerPort: 8000
+          env:
+          - name: OPENWEATHER_API_KEY
+            value: "5c62da02e9e30f91537def5669c10abc"

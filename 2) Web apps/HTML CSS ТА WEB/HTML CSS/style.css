@@ -1,0 +1,22 @@
+a {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ed2a2a;
+    text-decoration: none;
+}
+.link_class {
+    font-size: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #8787ed;
+    margin-left: 320px;
+}
+.div-p {
+    background: #ed1218;
+    color: #ede99f;
+    margin-bottom: 100px;
+    padding: 50px;
+    display: flex;
+    flex-direction: row;
+
+}

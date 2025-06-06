@@ -1,0 +1,29 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Список книг {% endblock %}
+{% block content %}
+    <form method="get">
+        <input name="q" value="{{ q }}" placeholder="Назва">
+        <input name="author" value="{{ author }}" placeholder="Автор">
+        <input name="genre" value="{{ genre }}" placeholder="Жанр">
+        <button>Пошук</button>
+        <a href="/">Скинути</a>
+    </form>
+    <ul>
+        {% for book in page_obj %}
+            <li>
+                <strong>{{ book.title }}</strong> - {{ book.author }}
+                [<a href="/edit/{{ book.pk }}/">edit</a>]
+                [<a href="/delete/{{ book.pk }}/">delete</a>]
+            </li>
+        {% empty %} <li>Немає книг</li> {% endfor %}
+    </ul>
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+{% endblock %}
