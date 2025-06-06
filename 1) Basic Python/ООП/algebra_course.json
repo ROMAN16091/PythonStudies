@@ -1,0 +1,20 @@
+{
+    "name": "Algebra",
+    "start_date": "2025-03-01",
+    "end_date": "2025-06-01",
+    "course_type": "Mathematics",
+    "students": [
+        {
+            "name": "Alice",
+            "grade": 90
+        },
+        {
+            "name": "Bob",
+            "grade": 75
+        },
+        {
+            "name": "Emma",
+            "grade": 98
+        }
+    ]
+}

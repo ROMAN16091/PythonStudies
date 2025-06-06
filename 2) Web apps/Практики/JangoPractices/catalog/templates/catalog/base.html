@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} Бібліотека {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'catalog/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Онлайн-бібліотека</h1>
+        <nav>
+            <a href="/">Головна</a>
+            {% if user.is_authenticated %}
+            |Hello, {{user.username}}!
+            <form method="post" action="{% url 'logout'%}" style = 'display: inline'>
+                {% csrf_token %}
+                <button type = 'submit' class = 'btn-logout'>Log Out</button>
+            </form>
+            {% else %}
+            | <a href="{%url 'login'%}">LogIn</a>
+            | <a href="{%url 'register'%}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+    {% if messages %}
+        <ul class="message">
+            {% for m in messages %}
+            <li class="{{ m.tags }}">
+                {{ m }}
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
