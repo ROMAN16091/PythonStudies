@@ -5,10 +5,8 @@ from random import choice
 
 app = Flask(__name__)
 api = Api(app)
-app.config['JSON_AS_ASCII'] = False
-with open("questions.json", encoding="utf-8") as f:
+with open('questions.json', 'r', encoding='utf-8') as f:
     questions = json.load(f)
-    print(questions)
 
 
 class Question(Resource):
@@ -20,11 +18,21 @@ class Question(Resource):
                 return question, 200
         return 'Not found this question.', 404
 
-    def post(self, id):
+class Answer(Resource):
+    def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('answer')
-        params = parser.parse_args(strict=True)
+        parser.add_argument('id', type=int, required=True, location='json')
+        parser.add_argument('answer', required=True, location='json')
+        args = parser.parse_args(strict=True)
+        for question in questions:
+            if question['id'] == args['id']:
+                if question['correct_answer'].lower().strip() == args['answer'].lower().strip():
+                    return 'Correct!', 200
+                else:
+                    return 'Wrong answer!', 200
+        return 'This question does not exist.', 404
 
 
 api.add_resource(Question, "/questions", "/questions/", "/questions/<int:id>")
+api.add_resource(Answer, "/answers", "/answers/")
 app.run(debug=True)
