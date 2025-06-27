@@ -39,7 +39,18 @@ img = Image.open('image.jpg')
 arr_img = np.array(img)
 print()
 print()
-R, G, B = arr_img[:, :, 0], arr_img[:, :, 1], arr_img[:, :, 2]
+try:
+      match arr_img.shape[2]:
+            case 1:
+                  channel = arr_img[:, :, 0]
+            case 3:
+                  R, G, B = arr_img[:, :, 0], arr_img[:, :, 1], arr_img[:, :, 2]
+            case 4:
+                  R, G, B, A = arr_img[:, :, 0], arr_img[:, :, 1], arr_img[:, :, 2], arr_img [:,:,3]
+            case _:
+                  print('Невідома кількість каналів!')
+except Exception as e:
+      print(f'Error: {e}')
 print(f'Середнє: {R.mean()}\n'
       f'Максимальне: {R.max()}\n'
       f'Мінімальне: {R.min()}\n')
