@@ -22,8 +22,6 @@ df = df.drop(columns='Cabin')
 # Заповнення порту посадки найчастішим
 df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
 
-# Заповнення відсутнього значення Fare
-df['Fare'] = df['Fare'].fillna(df['Fare'].mean())
 
 # 4. Інженерія ознак
 df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
