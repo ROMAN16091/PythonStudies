@@ -27,8 +27,6 @@ df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
 df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
 df['IsAlone'] = ((df['SibSp'] == 0) & (df['Parch'] == 0)).astype(int)
 df['Title'] = df['Name'].str.extract(', ([A-Za-z]+)\.')[0]
-df['Title'] = df['Title'].replace(['Mlle', 'Ms', 'Lady', 'Countess', 'Mme'], 'Rare')
-df['Title'] = df['Title'].replace(['Dr', 'Rev', 'Col', 'Major', 'Capt', 'Sir', 'Don', 'Jonkheer', 'Dona'], 'Rare')
 df['Title'] = LabelEncoder().fit_transform(df['Title'])
 df = df.drop(columns=['Name', 'Ticket'])  # Більше не потрібні
 
@@ -74,7 +72,7 @@ param_grid = {
     'n_estimators': [100, 200],
     'max_depth': [4, 6, 8]
 }
-grid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=5)
+grid_search = GridSearchCV(model, param_grid, cv=5)
 grid_search.fit(X_scaled, y)
 
 print("Найкращі параметри:", grid_search.best_params_)
