@@ -1,85 +1,83 @@
+# 1. Імпортуємо необхідні бібліотеки
 import pandas as pd
 import seaborn as sns
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 
-# Завантажуємо набір даних із raw-посилання
+# 2. Завантаження та попередній перегляд даних
 url = 'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv'
 df = pd.read_csv(url)
-print(df.head(), '\n')
+print("Перші 5 рядків:\n", df.head(), '\n')
 
-# Перевірка пропущених значень
+# 3. Очищення та попередня обробка
 print("Пропущені значення:\n", df.isna().sum(), '\n')
+df['Age'] = df['Age'].fillna(df['Age'].mean())
+df['Deck'] = df['Cabin'].str[0]
+df['Deck'] = df['Deck'].fillna(df['Deck'].mode()[0])
+df = df.drop(columns='Cabin')
 
-# Обробка пропущених значень
-df['Age'] = df['Age'].fillna(df['Age'].mean())  # Заповнюємо пропуски у віці середнім
-df['Deck'] = df['Cabin'].str[0]  # Витягуємо палубу з першої літери каюти
-df['Deck'] = df['Deck'].fillna(df['Deck'].mode()[0])  # Заповнюємо пропущені палуби найчастішою
-df = df.drop(columns='Cabin')  # Видаляємо колонку каюти, вона вже не потрібна
+# Заповнення порту посадки найчастішим
+df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
 
-# Ще раз перевіримо пропуски
-print("Після обробки:\n", df.isna().sum(), '\n')
+# Заповнення відсутнього значення Fare
+df['Fare'] = df['Fare'].fillna(df['Fare'].mean())
 
-# Кодуємо категоріальні змінні
-df = pd.get_dummies(df, columns=['Embarked'])  # Embarked → Embarked_C, Embarked_Q, Embarked_S
-df = pd.get_dummies(df, columns=['Sex'])  # Sex → Sex_female, Sex_male
-df = pd.get_dummies(df, columns=['Deck'])  # Deck → одна колонка на кожну палубу
-print("Після кодування:\n", df.head(), '\n')
-
-# Видаляємо неінформативні колонки
-df = df.drop(columns=['Ticket'])  # Номер квитка не несе корисної інформації
-
-# Інженерія ознак
-df['FamilySize'] = df['SibSp'] + df['Parch'] + 1  # Кількість людей, що подорожували разом
-df['IsAlone'] = ((df['SibSp'] == 0) & (df['Parch'] == 0)).astype(int)  # 1, якщо був один, 0 — ні
-df['Title'] = df['Name'].str.split(', ').str[1].str.split('. ').str[0]  # Витягуємо титул з імені
-df = df.drop(columns=['Name'])  # Після витягання титулу ім’я вже не потрібне
-
-# Об’єднуємо рідкісні титули в одну групу
+# 4. Інженерія ознак
+df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
+df['IsAlone'] = ((df['SibSp'] == 0) & (df['Parch'] == 0)).astype(int)
+df['Title'] = df['Name'].str.extract(', ([A-Za-z]+)\.')[0]
 df['Title'] = df['Title'].replace(['Mlle', 'Ms', 'Lady', 'Countess', 'Mme'], 'Rare')
 df['Title'] = df['Title'].replace(['Dr', 'Rev', 'Col', 'Major', 'Capt', 'Sir', 'Don', 'Jonkheer', 'Dona'], 'Rare')
-
-# Кодуємо колонку Title
 df['Title'] = LabelEncoder().fit_transform(df['Title'])
+df = df.drop(columns=['Name', 'Ticket'])  # Більше не потрібні
 
-# Обробка залишків пропусків (наприклад, Fare у 1 рядку)
-df = df.dropna()
+# 5. Кодування категоріальних змінних
+df = pd.get_dummies(df, columns=['Embarked', 'Sex', 'Deck'], drop_first=True)
 
-# Розділяємо змінні на ознаки (X) та ціль (y)
-X = df.drop('Survived', axis=1)
+# 6. Розвідувальний аналіз даних (EDA)
+sns.countplot(data=df, x='Survived')
+plt.title("Кількість тих, хто вижив / не вижив")
+plt.show()
+
+sns.boxplot(data=df, x='Survived', y='Age')
+plt.title("Розподіл віку за виживанням")
+plt.show()
+
+# 7. Розділення на X і y
+X = df.drop(columns='Survived')
 y = df['Survived']
 
-# Масштабуємо ознаки (щоб не було великих розбіжностей у значеннях)
+# Масштабування ознак
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Розбиваємо на train/test
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+# Розбиття на навчальну і тестову вибірки
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42, stratify=y)
 
-# Навчаємо модель
+# 8. Побудова моделі (Random Forest)
 model = RandomForestClassifier(random_state=42)
 model.fit(X_train, y_train)
 
-# Оцінка на тестових даних
+# 9. Оцінка моделі
 y_pred = model.predict(X_test)
-
-# Крос-валідація
-cv_score = cross_val_score(model, X_scaled, y, cv=5).mean()
-print(f"Середня точність (крос-валідація): {cv_score:.4f}")
-
-# Матриця помилок
+print("Класифікаційний звіт:\n", classification_report(y_test, y_pred))
 ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred)).plot()
 plt.title("Матриця помилок")
 plt.show()
 
-# Звіт класифікації
-print("Класифікаційний звіт:\n", classification_report(y_test, y_pred))
+cv_score = cross_val_score(model, X_scaled, y, cv=5).mean()
+print(f"Середня точність на крос-валідації: {cv_score:.4f}")
 
-# Пошук найкращих параметрів (опційно)
-param_grid = {'n_estimators': [100, 200], 'max_depth': [4, 6, 8]}
+# 10. Підбір параметрів (GridSearchCV)
+param_grid = {
+    'n_estimators': [100, 200],
+    'max_depth': [4, 6, 8]
+}
 grid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=5)
 grid_search.fit(X_scaled, y)
+
 print("Найкращі параметри:", grid_search.best_params_)
+print(f"Точність з найкращими параметрами: {grid_search.best_score_:.4f}")
